@@ -11,6 +11,9 @@
 *.la
 *.a
 
+# Autotool files
+Makefile.in
+
 # Some system or backup files
 .*
 !.gitignore
