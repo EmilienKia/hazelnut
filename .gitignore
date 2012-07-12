@@ -10,3 +10,12 @@
 *.lai
 *.la
 *.a
+
+# Some system or backup files
+.*
+!.gitignore
+*~
+
+# Windows files
+Thumbs.db
+Desktop.ini
