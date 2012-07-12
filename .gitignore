@@ -11,13 +11,28 @@
 *.la
 *.a
 
-# Autotool files
+# Autotool, m4 and make files
 Makefile.in
+Makefile
+/aclocal.m4
+/autom4te.cache/
+/config.*
+!/config.h.in
+/configure
+/depcomp
+/install-sh
+/libtool
+/ltmain.sh
+/missing
+/mkinstalldirs
+/stamp-h1
 
 # Some system or backup files
 .*
 !.gitignore
 *~
+*.bak
+*.old
 
 # Windows files
 Thumbs.db
