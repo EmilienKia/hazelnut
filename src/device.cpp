@@ -122,3 +122,11 @@ wxString Device::getModel()
 	return model;
 }
 
+wxString Device::getSerial()
+{
+	if(serial.IsEmpty() && IsOk())
+	{
+		serial = getVar("device.serial");
+	}
+	return serial;
+}

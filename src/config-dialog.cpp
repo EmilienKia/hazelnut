@@ -85,7 +85,7 @@ void HazelnutConfigDialog::RefreshList()
 	for(std::list<Device>::iterator it=devices.begin(); it!=devices.end(); it++)
 	{
 		Device& dev = *it;
-		wxString label = dev.getManufacturer() + wxT(" - ") + dev.getModel();
+		wxString label = dev.getManufacturer() + wxT(" - ") + dev.getModel() + wxT(" - ") + dev.getSerial();
 		int idx = choice->Append(label, &dev);
 		if(dev==current)
 			choice->SetSelection(idx);
