@@ -48,9 +48,10 @@ public:
 	wxString getManufacturer();
 	wxString getModel();
 	wxString getSerial();
+	wxString getDeviceType();
 	
 protected:
-	wxString mfr, model, serial;
+	wxString mfr, model, serial, type;
 	
 	wxString id;
 	UPSCONN_t* upsconn;

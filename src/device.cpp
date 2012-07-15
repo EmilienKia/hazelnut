@@ -130,3 +130,13 @@ wxString Device::getSerial()
 	}
 	return serial;
 }
+
+wxString Device::getDeviceType()
+{
+	if(type.IsEmpty() && IsOk())
+	{
+		type = getVar("device.type");
+	}
+	return type;
+}
+
