@@ -31,11 +31,14 @@ public:
     virtual ~HazelnutConfigDialog();
 
 	void RefreshList();
+	void RefreshInfos();
 	
 protected:
 	std::list<Device> devices;
 	
 	wxChoice* choice;
+	wxGauge*  gauge;
+	wxStaticText* timeToEmpty;
 	
 	void OnRefreshUPSList(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);

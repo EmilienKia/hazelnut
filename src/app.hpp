@@ -35,7 +35,8 @@ public:
 
 	void SetDevice(const Device& dev);
 	void SetNoDevice();
-	Device GetDevice()const {return device;}
+	Device& GetDevice() {return device;}
+	const Device& GetDevice()const {return device;}
 	
 	void Update();
     

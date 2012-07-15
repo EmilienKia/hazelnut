@@ -42,7 +42,7 @@ END_EVENT_TABLE()
 
 
 HazelnutConfigDialog::HazelnutConfigDialog(const wxString& title)
-        : wxDialog(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(512, 300))
+        : wxDialog(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(512, -1))
 {
     wxSizer* gsz = new wxBoxSizer(wxVERTICAL);
 
@@ -55,6 +55,9 @@ HazelnutConfigDialog::HazelnutConfigDialog(const wxString& title)
 		gsz->Add(sz, 0, wxEXPAND);
 	}
 
+	gsz->Add(gauge = new wxGauge(this, wxID_ANY, 100), 0, wxEXPAND|wxALL, 4);
+	gsz->Add(timeToEmpty = new wxStaticText(this, wxID_ANY, wxT("")), 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 4);
+	
 	{
 		wxSizer*  sz = new wxBoxSizer(wxHORIZONTAL);
 		sz->Add(new wxButton(this, wxID_ABOUT, wxT("&About")), 0, wxALL, 10);
@@ -63,6 +66,7 @@ HazelnutConfigDialog::HazelnutConfigDialog(const wxString& title)
 		gsz->Add(sz, 0, wxALIGN_CENTER_HORIZONTAL);
 	}
     SetSizer(gsz);
+	Layout();
     Centre();
 
 	RefreshList();
@@ -93,6 +97,45 @@ void HazelnutConfigDialog::RefreshList()
 				choice->SetSelection(idx);
 		}
 	}
+
+	RefreshInfos();
+}
+
+void HazelnutConfigDialog::RefreshInfos()
+{
+	Device current = wxGetApp().GetDevice();
+	long longVal;
+
+	if(current)
+	{
+		if(current.getVar("battery.charge").ToLong(&longVal))
+		{
+			gauge->SetValue(longVal);
+			gauge->SetToolTip(wxString::Format(wxT("Battery charge: %ld %%"), longVal));
+		}
+		else
+		{
+			gauge->SetValue(0);
+			gauge->SetToolTip(wxT("Battery charge: not available"));
+		}
+
+		if(current.getVar("battery.runtime").ToLong(&longVal))
+		{
+			timeToEmpty->SetLabel(wxString::Format(wxT("Remaining: %ld s"), longVal));
+		}
+		else
+		{
+			timeToEmpty->SetLabel(wxT("Remaining: N/A"));
+		}
+	}
+	else
+	{
+		gauge->SetValue(0);
+		gauge->SetToolTip(wxT("Battery charge: not available"));
+		timeToEmpty->SetLabel(wxT("Remaining: N/A"));		
+	}
+	
+	Layout();
 }
 
 void HazelnutConfigDialog::OnChoicePowerSource(wxCommandEvent& WXUNUSED(event))
@@ -102,6 +145,8 @@ void HazelnutConfigDialog::OnChoicePowerSource(wxCommandEvent& WXUNUSED(event))
 		wxGetApp().SetDevice(Device());
 	else
 		wxGetApp().SetDevice(*(Device*)choice->GetClientData(sel));
+
+	RefreshInfos();
 }
 
 void HazelnutConfigDialog::OnRefreshUPSList(wxCommandEvent& WXUNUSED(event))
