@@ -112,7 +112,7 @@ bool HazelnutApp::AutoselectPowerSource()
 void HazelnutApp::SetDevice(const Device& dev)
 {
 wxLogDebug("HazelnutApp::SetDevice : %s\n", (const char*)dev.getId().c_str());
-	timer->IsRunning();
+	if(timer->IsRunning())
 		timer->Stop();
 
 	device = dev;
