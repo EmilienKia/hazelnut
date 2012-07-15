@@ -33,6 +33,9 @@ public:
 
 	bool IsOk()const{return !id.IsEmpty();}
 
+	bool operator==(const Device& dev)const{return id==dev.id;}
+	operator bool()const{return !id.IsEmpty();}
+
 	wxString getId()const{return id;}
 	
 	wxString getVar(const wxString& name);

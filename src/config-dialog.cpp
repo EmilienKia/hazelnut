@@ -75,11 +75,11 @@ HazelnutConfigDialog::~HazelnutConfigDialog()
 void HazelnutConfigDialog::RefreshList()
 {
 	devices = wxGetApp().getUps();
-	wxString current = wxGetApp().GetDevice().getId();
+	Device current = wxGetApp().GetDevice();
 	
 	choice->Clear();
 	choice->Append(wxT("None"));
-	if(current.IsEmpty())
+	if(!current)
 		choice->SetSelection(0);
 
 	for(std::list<Device>::iterator it=devices.begin(); it!=devices.end(); it++)
@@ -87,7 +87,7 @@ void HazelnutConfigDialog::RefreshList()
 		Device& dev = *it;
 		wxString label = dev.getManufacturer() + wxT(" - ") + dev.getModel();
 		int idx = choice->Append(label, &dev);
-		if(dev.getId()==current)
+		if(dev==current)
 			choice->SetSelection(idx);
 	}
 }
