@@ -32,6 +32,7 @@ hazelnut is free software: you can redistribute it and/or modify it
 // ----------------------------------------------------------------------------
 
 BEGIN_EVENT_TABLE(HazelnutConfigDialog, wxDialog)
+	EVT_TIMER(wxID_ANY, HazelnutConfigDialog::OnTimerUpdate)
 	EVT_BUTTON(wxID_REVERT, HazelnutConfigDialog::OnRefreshUPSList)
     EVT_BUTTON(wxID_ABOUT, HazelnutConfigDialog::OnAbout)
     EVT_BUTTON(wxID_OK, HazelnutConfigDialog::OnOK)
@@ -44,6 +45,9 @@ END_EVENT_TABLE()
 HazelnutConfigDialog::HazelnutConfigDialog(const wxString& title)
         : wxDialog(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(512, -1))
 {
+	// Create the timer for updatting status
+	timer = new wxTimer(this);
+	
     wxSizer* gsz = new wxBoxSizer(wxVERTICAL);
 
 	gsz->Add(new wxStaticBitmap(this, wxID_ANY, wxBitmap(nut_banner_xpm)), 0, wxALIGN_CENTER_HORIZONTAL);
@@ -74,6 +78,24 @@ HazelnutConfigDialog::HazelnutConfigDialog(const wxString& title)
 
 HazelnutConfigDialog::~HazelnutConfigDialog()
 {
+}
+
+bool HazelnutConfigDialog::HazelnutConfigDialog::Show(bool show)
+{
+	if(!wxDialog::Show(show))
+		return false;
+
+	if(show)
+	{
+		timer->Start(5*1000);
+	}
+	else
+	{
+		if(timer->IsRunning())
+			timer->Stop();
+	}
+	
+	return true;
 }
 
 void HazelnutConfigDialog::RefreshList()
@@ -136,6 +158,11 @@ void HazelnutConfigDialog::RefreshInfos()
 	}
 	
 	Layout();
+}
+
+void HazelnutConfigDialog::OnTimerUpdate(wxTimerEvent& event)
+{
+	RefreshInfos();
 }
 
 void HazelnutConfigDialog::OnChoicePowerSource(wxCommandEvent& WXUNUSED(event))

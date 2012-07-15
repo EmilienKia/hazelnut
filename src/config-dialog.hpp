@@ -30,6 +30,8 @@ public:
     HazelnutConfigDialog(const wxString& title);
     virtual ~HazelnutConfigDialog();
 
+	virtual bool Show(bool show = true);
+		
 	void RefreshList();
 	void RefreshInfos();
 	
@@ -39,12 +41,15 @@ protected:
 	wxChoice* choice;
 	wxGauge*  gauge;
 	wxStaticText* timeToEmpty;
+
+	wxTimer* timer;
 	
 	void OnRefreshUPSList(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
     void OnOK(wxCommandEvent& event);
     void OnExit(wxCommandEvent& event);
 	
+	void OnTimerUpdate(wxTimerEvent& event);
     void OnCloseWindow(wxCloseEvent& event);
 
 	void OnChoicePowerSource(wxCommandEvent& event);
