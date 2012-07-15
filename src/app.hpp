@@ -22,6 +22,8 @@ hazelnut is free software: you can redistribute it and/or modify it
 
 #include "device.hpp"
 
+#include <wx/config.h>
+
 class HazelnutTaskBarIcon;
 class HazelnutConfigDialog;
 
@@ -32,20 +34,35 @@ public:
     virtual bool OnInit();
 
 	void SetDevice(const Device& dev);
+	void SetNoDevice();
+	Device GetDevice()const {return device;}
+	
 	void Update();
     
     void About();
     void ShowDialog();
     void Exit();
 
+	bool TryConnect();
+	bool AutoselectPowerSource();
+
+	bool IsConnected()const{return connected;}
+	
+	std::list<Device> getUps();
+
+	wxConfig* GetConfig();
 	
     HazelnutTaskBarIcon*  taskBarIcon;
     HazelnutConfigDialog* dialog;
+
+protected:
+	wxConfig* config;
 	
 	Device   device;
 	wxTimer* timer;
 	
 	UPSCONN_t upsconn;
+	bool connected;
 
 
 	void OnTimerUpdate(wxTimerEvent& event);

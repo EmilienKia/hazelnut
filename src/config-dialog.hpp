@@ -20,17 +20,32 @@ hazelnut is free software: you can redistribute it and/or modify it
 #ifndef _CONFIG_DIALOG_HPP_
 #define _CONFIG_DIALOG_HPP_
 
+#include <list>
+
+#include "device.hpp"
+
 class HazelnutConfigDialog: public wxDialog
 {
 public:
     HazelnutConfigDialog(const wxString& title);
     virtual ~HazelnutConfigDialog();
 
+	void RefreshList();
+	
 protected:
+	std::list<Device> devices;
+	
+	wxChoice* choice;
+	
+	void OnRefreshUPSList(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
     void OnOK(wxCommandEvent& event);
     void OnExit(wxCommandEvent& event);
+	
     void OnCloseWindow(wxCloseEvent& event);
+
+	void OnChoicePowerSource(wxCommandEvent& event);
+	
     DECLARE_EVENT_TABLE()
 };
 

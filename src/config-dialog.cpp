@@ -24,55 +24,86 @@ hazelnut is free software: you can redistribute it and/or modify it
 #include "config-dialog.hpp"
 
 #include "app.hpp"
+#include "pixmaps/nut-banner.xpm"
+
 
 // ----------------------------------------------------------------------------
 // HazelnutConfigDialog implementation
 // ----------------------------------------------------------------------------
 
 BEGIN_EVENT_TABLE(HazelnutConfigDialog, wxDialog)
+	EVT_BUTTON(wxID_REVERT, HazelnutConfigDialog::OnRefreshUPSList)
     EVT_BUTTON(wxID_ABOUT, HazelnutConfigDialog::OnAbout)
     EVT_BUTTON(wxID_OK, HazelnutConfigDialog::OnOK)
     EVT_BUTTON(wxID_EXIT, HazelnutConfigDialog::OnExit)
     EVT_CLOSE(HazelnutConfigDialog::OnCloseWindow)
+	EVT_CHOICE(wxID_ANY, HazelnutConfigDialog::OnChoicePowerSource)
 END_EVENT_TABLE()
 
 
 HazelnutConfigDialog::HazelnutConfigDialog(const wxString& title)
-        : wxDialog(NULL, wxID_ANY, title)
+        : wxDialog(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(512, 300))
 {
-    wxSizer * const sizerTop = new wxBoxSizer(wxVERTICAL);
+    wxSizer* gsz = new wxBoxSizer(wxVERTICAL);
 
-    wxSizerFlags flags;
-    flags.Border(wxALL, 10);
+	gsz->Add(new wxStaticBitmap(this, wxID_ANY, wxBitmap(nut_banner_xpm)), 0, wxALIGN_CENTER_HORIZONTAL);
+	{
+		wxSizer* sz = new wxBoxSizer(wxHORIZONTAL);
+		sz->Add(new wxStaticText(this, wxID_ANY, wxT("Power source:")), 0, wxALIGN_CENTER_VERTICAL|wxALL, 4);
+		sz->Add(choice = new wxChoice(this, wxID_ANY), 1, wxALL, 4);
+		sz->Add(new wxButton(this, wxID_REVERT, wxT("Reload")), 0, wxALIGN_CENTER_VERTICAL|wxALL, 4);
+		gsz->Add(sz, 0, wxEXPAND);
+	}
 
-    sizerTop->Add(new wxStaticText
-                      (
-                        this,
-                        wxID_ANY,
-                        wxT("Press 'Hide me' to hide this window, Exit to quit.")
-                      ), flags);
-
-    sizerTop->Add(new wxStaticText
-                      (
-                        this,
-                        wxID_ANY,
-                        wxT("Double-click on the taskbar icon to show me again.")
-                      ), flags);
-
-    sizerTop->AddStretchSpacer()->SetMinSize(200, 50);
-
-    wxSizer * const sizerBtns = new wxBoxSizer(wxHORIZONTAL);
-    sizerBtns->Add(new wxButton(this, wxID_ABOUT, wxT("&About")), flags);
-    sizerBtns->Add(new wxButton(this, wxID_OK, wxT("&Hide")), flags);
-    sizerBtns->Add(new wxButton(this, wxID_EXIT, wxT("E&xit")), flags);
-
-    sizerTop->Add(sizerBtns, flags.Align(wxALIGN_CENTER_HORIZONTAL));
-    SetSizerAndFit(sizerTop);
+	{
+		wxSizer*  sz = new wxBoxSizer(wxHORIZONTAL);
+		sz->Add(new wxButton(this, wxID_ABOUT, wxT("&About")), 0, wxALL, 10);
+		sz->Add(new wxButton(this, wxID_OK, wxT("&Hide")), 0, wxALL, 10);
+		sz->Add(new wxButton(this, wxID_EXIT, wxT("E&xit")), 0, wxALL, 10);
+		gsz->Add(sz, 0, wxALIGN_CENTER_HORIZONTAL);
+	}
+    SetSizer(gsz);
     Centre();
+
+	RefreshList();
 }
 
 HazelnutConfigDialog::~HazelnutConfigDialog()
 {
+}
+
+void HazelnutConfigDialog::RefreshList()
+{
+	devices = wxGetApp().getUps();
+	wxString current = wxGetApp().GetDevice().getId();
+	
+	choice->Clear();
+	choice->Append(wxT("None"));
+	if(current.IsEmpty())
+		choice->SetSelection(0);
+
+	for(std::list<Device>::iterator it=devices.begin(); it!=devices.end(); it++)
+	{
+		Device& dev = *it;
+		wxString label = dev.getManufacturer() + wxT(" - ") + dev.getModel();
+		int idx = choice->Append(label, &dev);
+		if(dev.getId()==current)
+			choice->SetSelection(idx);
+	}
+}
+
+void HazelnutConfigDialog::OnChoicePowerSource(wxCommandEvent& WXUNUSED(event))
+{
+	int sel = choice->GetSelection();
+	if(sel==-1 || sel==0)
+		wxGetApp().SetDevice(Device());
+	else
+		wxGetApp().SetDevice(*(Device*)choice->GetClientData(sel));
+}
+
+void HazelnutConfigDialog::OnRefreshUPSList(wxCommandEvent& WXUNUSED(event))
+{
+	RefreshList();
 }
 
 void HazelnutConfigDialog::OnAbout(wxCommandEvent& WXUNUSED(event))

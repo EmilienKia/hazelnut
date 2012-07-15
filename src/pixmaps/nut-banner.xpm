@@ -1,5 +1,5 @@
 /* XPM */
-static char *out_17[] = {
+static const char *nut_banner_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "344 72 256 2 ",
 "   c #060606",

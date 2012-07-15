@@ -40,8 +40,14 @@ public:
 	std::map<wxString,wxString> getVars();
 
 	static std::list<Device> getUps(UPSCONN_t* upsconn);
+
+
+	wxString getManufacturer();
+	wxString getModel();
 	
 protected:
+	wxString mfr, model;
+	
 	wxString id;
 	UPSCONN_t* upsconn;
 };

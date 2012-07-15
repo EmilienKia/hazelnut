@@ -49,37 +49,69 @@ END_EVENT_TABLE()
 
 bool HazelnutApp::OnInit()
 {
+	connected = false;
+	config = NULL;
+	
 	// Create the timer for updatting status
 	timer = new wxTimer(this);
 	// Create task bar icon
     taskBarIcon = new HazelnutTaskBarIcon();
 
 	// Intend to connect to UPSD
-	if(upscli_connect(&upsconn, "localhost", 3493, 0)==-1)
+	if(TryConnect())
 	{
-		wxMessageBox(wxT("Can not connect to UPSD"), wxT("Hazelnut - error"), wxOK|wxICON_ERROR);
-		return false;
+		// Intend to select power source (from conf or from available source list)
+		AutoselectPowerSource();
 	}
-
-	std::list<Device> list = Device::getUps(&upsconn);
-	if(list.empty())
-	{
-		wxMessageBox(wxT("No UPS available"), wxT("Hazelnut - error"), wxOK|wxICON_ERROR);
-		return false;
-	}
-	SetDevice(list.front());
-
 	
     dialog = new HazelnutConfigDialog(wxT("Hazelnut"));
-//    dialog->Show();
+    dialog->Show();
     SetTopWindow(dialog);
-    
 
     return true;
 }
 
+bool HazelnutApp::TryConnect()
+{
+	connected = upscli_connect(&upsconn, "localhost", 3493, 0) == 0;
+	return connected;
+}
+
+bool HazelnutApp::AutoselectPowerSource()
+{
+	wxConfig* conf = GetConfig();
+	if(conf->HasEntry(wxT("dev")))
+	{
+		wxString dev = conf->Read(wxT("dev"), wxT(""));
+		if(dev.IsEmpty())
+		{
+			SetNoDevice();
+		}
+		else
+		{
+			SetDevice(Device(dev, &upsconn));
+		}
+		return true;
+	}
+	else
+	{
+		std::list<Device> list = Device::getUps(&upsconn);
+		if(list.empty())
+		{
+			SetNoDevice();
+			return false;
+		}
+		else
+		{
+			SetDevice(list.front());
+			return true;
+		}
+	}
+}
+
 void HazelnutApp::SetDevice(const Device& dev)
 {
+wxLogDebug("HazelnutApp::SetDevice : %s\n", (const char*)dev.getId().c_str());
 	timer->IsRunning();
 		timer->Stop();
 
@@ -88,8 +120,18 @@ void HazelnutApp::SetDevice(const Device& dev)
 
 	if(device.IsOk())
 	{
+		GetConfig()->Write(wxT("dev"), dev.getId());
 		timer->Start(5*1000);
 	}
+	else
+	{
+		GetConfig()->Write(wxT("dev"), wxT(""));
+	}
+}
+
+void HazelnutApp::SetNoDevice()
+{
+	SetDevice(Device());
 }
 
 void HazelnutApp::Update()
@@ -139,6 +181,18 @@ void HazelnutApp::Update()
 	}
 }
 
+std::list<Device> HazelnutApp::getUps()
+{
+	return Device::getUps(&upsconn);
+}
+
+wxConfig* HazelnutApp::GetConfig()
+{
+	if(config==NULL)
+		config = new wxConfig("hazelnut");
+	return config;
+}
+
 void HazelnutApp::About()
 {
     wxAboutDialogInfo info;
@@ -165,6 +219,12 @@ void HazelnutApp::Exit()
     dialog->Hide();
     dialog->Close();
     dialog->Destroy();
+
+	if(config)
+	{
+		delete config;
+		config = NULL;
+	}
 }
 
 void HazelnutApp::OnTimerUpdate(wxTimerEvent& event)

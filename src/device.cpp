@@ -84,6 +84,9 @@ std::list<Device> Device::getUps(UPSCONN_t* upsconn)
 {
 	std::list<Device> ret;
 
+	if(!upsconn)
+		return ret;
+
 	const char* query[] = {"UPS"};
 	char** answer;
 	unsigned int nbanswer;
@@ -101,4 +104,21 @@ std::list<Device> Device::getUps(UPSCONN_t* upsconn)
 	return ret;
 }
 
+wxString Device::getManufacturer()
+{
+	if(mfr.IsEmpty() && IsOk())
+	{
+		mfr = getVar("device.mfr");
+	}
+	return mfr;
+}
+
+wxString Device::getModel()
+{
+	if(model.IsEmpty() && IsOk())
+	{
+		model = getVar("device.model");
+	}
+	return model;
+}
 
