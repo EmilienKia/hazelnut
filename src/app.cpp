@@ -189,7 +189,7 @@ std::list<Device> HazelnutApp::getUps()
 wxConfig* HazelnutApp::GetConfig()
 {
 	if(config==NULL)
-		config = new wxConfig("hazelnut");
+		config = new wxConfig(wxT("hazelnut"));
 	return config;
 }
 
