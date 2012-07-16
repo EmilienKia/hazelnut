@@ -65,7 +65,7 @@ bool HazelnutApp::OnInit()
 	}
 	
     dialog = new HazelnutConfigDialog(wxT("Hazelnut"));
-    dialog->Show();
+    dialog->Show(false);
     SetTopWindow(dialog);
 
     return true;
