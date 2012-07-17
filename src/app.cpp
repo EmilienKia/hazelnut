@@ -29,14 +29,16 @@ hazelnut is free software: you can redistribute it and/or modify it
 #include "config-dialog.hpp"
 #include "task-bar-icon.hpp"
 
-#include "pixmaps/bat_fault22.xpm"
-#include "pixmaps/menu_status16.xpm"
-#include "pixmaps/menu_settings16.xpm"
-#include "pixmaps/systray_bat_000.xpm"
-#include "pixmaps/systray_bat_025.xpm"
-#include "pixmaps/systray_bat_050.xpm"
-#include "pixmaps/systray_bat_075.xpm"
-#include "pixmaps/systray_bat_100.xpm"
+#include "../data/icons/16x16/status/battery-missing.xpm"
+#include "../data/icons/16x16/status/battery-empty.xpm"
+#include "../data/icons/16x16/status/battery-caution.xpm"
+#include "../data/icons/16x16/status/battery-caution-charging.xpm"
+#include "../data/icons/16x16/status/battery-low.xpm"
+#include "../data/icons/16x16/status/battery-low-charging.xpm"
+#include "../data/icons/16x16/status/battery-good.xpm"
+#include "../data/icons/16x16/status/battery-good-charging.xpm"
+#include "../data/icons/16x16/status/battery-full.xpm"
+#include "../data/icons/16x16/status/battery-full-charging.xpm"
 
 // ----------------------------------------------------------------------------
 // HazelnutApp implementation
@@ -138,7 +140,7 @@ void HazelnutApp::Update()
 {
 	if(!device.IsOk())
 	{
-		taskBarIcon->SetIcon(wxIcon(bat_fault22_xpm), wxT("No device selected"));
+		taskBarIcon->SetIcon(wxIcon(battery_missing_16), wxT("No device selected"));
 	}
 	else
 	{
@@ -152,30 +154,26 @@ void HazelnutApp::Update()
 		
 		if(batCharge < 0 || batCharge > 100)
 		{
-			taskBarIcon->SetIcon(wxIcon(bat_fault22_xpm), label + wxT("\nError in battery charge reading"));
+			taskBarIcon->SetIcon(wxIcon(battery_missing_16), label + wxT("\nError in battery charge reading"));
 		}
 		else
 		{
 			wxString msg = label + wxT("\nBattery charge: ") + batteryCharge + wxT("%");
 			if(batCharge < 10)
 			{
-				taskBarIcon->SetIcon(wxIcon(systray_bat_000_xpm), msg );
+				taskBarIcon->SetIcon(wxIcon(battery_empty_16), msg );
 			}
-			else if(batCharge < 35)
+			else if(batCharge < 30)
 			{
-				taskBarIcon->SetIcon(wxIcon(systray_bat_025_xpm), msg);
+				taskBarIcon->SetIcon(wxIcon(battery_low_16), msg);
 			}
-			else if(batCharge < 60)
+			else if(batCharge < 90)
 			{
-				taskBarIcon->SetIcon(wxIcon(systray_bat_050_xpm), msg);
-			}
-			else if(batCharge < 85)
-			{
-				taskBarIcon->SetIcon(wxIcon(systray_bat_075_xpm), msg);
+				taskBarIcon->SetIcon(wxIcon(battery_good_16), msg);
 			}
 			else
 			{
-				taskBarIcon->SetIcon(wxIcon(systray_bat_100_xpm), msg);
+				taskBarIcon->SetIcon(wxIcon(battery_full_16), msg);
 			}
 		}
 	}

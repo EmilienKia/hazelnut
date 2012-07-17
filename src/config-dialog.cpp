@@ -24,8 +24,6 @@ hazelnut is free software: you can redistribute it and/or modify it
 #include "config-dialog.hpp"
 
 #include "app.hpp"
-#include "pixmaps/nut-banner.xpm"
-
 
 // ----------------------------------------------------------------------------
 // HazelnutConfigDialog implementation
@@ -50,7 +48,6 @@ HazelnutConfigDialog::HazelnutConfigDialog(const wxString& title)
 	
     wxSizer* gsz = new wxBoxSizer(wxVERTICAL);
 
-	gsz->Add(new wxStaticBitmap(this, wxID_ANY, wxBitmap(nut_banner_xpm)), 0, wxALIGN_CENTER_HORIZONTAL);
 	{
 		wxSizer* sz = new wxBoxSizer(wxHORIZONTAL);
 		sz->Add(new wxStaticText(this, wxID_ANY, wxT("Power source:")), 0, wxALIGN_CENTER_VERTICAL|wxALL, 4);
