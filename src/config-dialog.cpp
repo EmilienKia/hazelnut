@@ -25,6 +25,8 @@ hazelnut is free software: you can redistribute it and/or modify it
 
 #include "app.hpp"
 
+#include "../data/icons/32x32/apps/nut.xpm"
+
 // ----------------------------------------------------------------------------
 // HazelnutConfigDialog implementation
 // ----------------------------------------------------------------------------
@@ -70,6 +72,8 @@ HazelnutConfigDialog::HazelnutConfigDialog(const wxString& title)
 	Layout();
     Centre();
 
+	SetIcon(wxIcon(nut_32));
+	
 	RefreshList();
 }
 
