@@ -24,6 +24,7 @@ hazelnut is free software: you can redistribute it and/or modify it
 #include "config-dialog.hpp"
 
 #include "app.hpp"
+#include "colored-gauge.hpp"
 
 #include "../data/icons/32x32/apps/nut.xpm"
 
@@ -43,7 +44,7 @@ END_EVENT_TABLE()
 
 
 HazelnutConfigDialog::HazelnutConfigDialog(const wxString& title)
-        : wxDialog(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(512, -1))
+        : wxDialog(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER)
 {
 	// Create the timer for updatting status
 	timer = new wxTimer(this);
@@ -58,9 +59,24 @@ HazelnutConfigDialog::HazelnutConfigDialog(const wxString& title)
 		gsz->Add(sz, 0, wxEXPAND);
 	}
 
-	gsz->Add(gauge = new wxGauge(this, wxID_ANY, 100), 0, wxEXPAND|wxALL, 4);
+	gsz->Add(gauge = new wxColoredGauge(this, wxID_ANY, 0, 0, 100, wxDefaultPosition, wxDefaultSize, wxBORDER_SUNKEN), 0, wxEXPAND|wxALL, 4);
+	gauge->SetColorStep(20, wxColour(255, 0, 0), wxColour(92, 0, 0));
+	gauge->SetColorStep(30, wxColour(255, 128, 0), wxColour(92, 46, 0));
+	gauge->SetColorStep(40, wxColour(255, 255, 0), wxColour(92, 92, 0));
+	gauge->SetColorStep(100, wxColour(0, 255, 0), wxColour(0, 92, 0));
+	gauge->SetMark(10, 0.33);
+	gauge->SetMark(20, 0.33);
+	gauge->SetMark(30, 0.33);
+	gauge->SetMark(40, 0.33);
+	gauge->SetMark(50, 0.5);
+	gauge->SetMark(60, 0.33);
+	gauge->SetMark(70, 0.33);
+	gauge->SetMark(80, 0.33);
+	gauge->SetMark(90, 0.33);
+	
 	gsz->Add(timeToEmpty = new wxStaticText(this, wxID_ANY, wxT("")), 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 4);
 	
+	gsz->AddStretchSpacer(1);
 	{
 		wxSizer*  sz = new wxBoxSizer(wxHORIZONTAL);
 		sz->Add(new wxButton(this, wxID_ABOUT, wxT("&About")), 0, wxALL, 10);
@@ -68,7 +84,7 @@ HazelnutConfigDialog::HazelnutConfigDialog(const wxString& title)
 		sz->Add(new wxButton(this, wxID_EXIT, wxT("E&xit")), 0, wxALL, 10);
 		gsz->Add(sz, 0, wxALIGN_CENTER_HORIZONTAL);
 	}
-    SetSizer(gsz);
+    SetSizerAndFit(gsz);
 	Layout();
     Centre();
 

@@ -24,6 +24,8 @@ hazelnut is free software: you can redistribute it and/or modify it
 
 #include "device.hpp"
 
+class wxColoredGauge;
+
 class HazelnutConfigDialog: public wxDialog
 {
 public:
@@ -39,7 +41,7 @@ protected:
 	std::list<Device> devices;
 	
 	wxChoice* choice;
-	wxGauge*  gauge;
+	wxColoredGauge*  gauge;
 	wxStaticText* timeToEmpty;
 
 	wxTimer* timer;

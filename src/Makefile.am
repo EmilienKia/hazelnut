@@ -24,7 +24,9 @@ hazelnut_SOURCES = \
 	config-dialog.cpp \
 	config-dialog.hpp \
 	device.cpp \
-	device.hpp
+	device.hpp \
+	colored-gauge.cpp \
+	colored-gauge.hpp
 
 hazelnut_LDFLAGS = 
 
