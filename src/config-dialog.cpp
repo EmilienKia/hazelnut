@@ -27,6 +27,7 @@ hazelnut is free software: you can redistribute it and/or modify it
 #include "colored-gauge.hpp"
 
 #include "../data/icons/32x32/apps/nut.xpm"
+#include "../data/icons/32x32/actions/refresh.xpm"
 
 // ----------------------------------------------------------------------------
 // HazelnutConfigDialog implementation
@@ -54,8 +55,13 @@ HazelnutConfigDialog::HazelnutConfigDialog(const wxString& title)
 	{
 		wxSizer* sz = new wxBoxSizer(wxHORIZONTAL);
 		sz->Add(new wxStaticText(this, wxID_ANY, wxT("Power source:")), 0, wxALIGN_CENTER_VERTICAL|wxALL, 4);
-		sz->Add(choice = new wxChoice(this, wxID_ANY), 1, wxALL, 4);
-		sz->Add(new wxButton(this, wxID_REVERT, wxT("Reload")), 0, wxALIGN_CENTER_VERTICAL|wxALL, 4);
+		sz->Add(choice = new wxChoice(this, wxID_ANY), 1, wxALIGN_CENTER_VERTICAL|wxALL, 4);
+
+		wxImage img(refresh_32);
+		img.Rescale(16, 16, wxIMAGE_QUALITY_HIGH);
+		wxBitmapButton* bmpbtn = new wxBitmapButton(this, wxID_REVERT, img);
+		bmpbtn->SetToolTip(wxT("Reload power source list"));
+		sz->Add(bmpbtn, 0, wxALIGN_CENTER_VERTICAL|wxALL, 4);
 		gsz->Add(sz, 0, wxEXPAND);
 	}
 
