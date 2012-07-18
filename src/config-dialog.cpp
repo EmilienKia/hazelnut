@@ -67,7 +67,7 @@ HazelnutConfigDialog::HazelnutConfigDialog(const wxString& title)
 	}
 
 	{
-		wxFlexGridSizer* grid = new wxFlexGridSizer(1, 4, 4, 8);
+		wxFlexGridSizer* grid = new wxFlexGridSizer(2, 4, 4, 8);
 		grid->AddGrowableCol(2, 1);
 		{
 			grid->Add(new wxStaticText(this, wxID_ANY, wxT("Battery charge:")), 0, wxALIGN_CENTER_VERTICAL);
@@ -75,23 +75,42 @@ HazelnutConfigDialog::HazelnutConfigDialog(const wxString& title)
 			grid->Add(batteryCharge = new wxStaticText(this, wxID_ANY, wxT("")), 0, wxALIGN_CENTER_VERTICAL);
 			batteryCharge->SetToolTip(wxT("Battery charge"));
 			
-			grid->Add(gauge = new wxColoredGauge(this, wxID_ANY, 0, 0, 100, wxDefaultPosition, wxDefaultSize, wxBORDER_SUNKEN), 0, wxALIGN_CENTER_VERTICAL|wxEXPAND);
-			gauge->SetColorStep(20, wxColour(255, 0, 0), wxColour(92, 0, 0));
-			gauge->SetColorStep(30, wxColour(255, 128, 0), wxColour(92, 46, 0));
-			gauge->SetColorStep(40, wxColour(255, 255, 0), wxColour(92, 92, 0));
-			gauge->SetColorStep(100, wxColour(0, 255, 0), wxColour(0, 92, 0));
-			gauge->SetMark(10, 0.33);
-			gauge->SetMark(20, 0.33);
-			gauge->SetMark(30, 0.33);
-			gauge->SetMark(40, 0.33);
-			gauge->SetMark(50, 0.66);
-			gauge->SetMark(60, 0.33);
-			gauge->SetMark(70, 0.33);
-			gauge->SetMark(80, 0.33);
-			gauge->SetMark(90, 0.33);
+			grid->Add(batteryGauge = new wxColoredGauge(this, wxID_ANY, 0, 0, 100, wxDefaultPosition, wxDefaultSize, wxBORDER_SUNKEN), 0, wxALIGN_CENTER_VERTICAL|wxEXPAND);
+			batteryGauge->SetColorStep(20, wxColour(255, 0, 0), wxColour(92, 0, 0));
+			batteryGauge->SetColorStep(30, wxColour(255, 128, 0), wxColour(92, 46, 0));
+			batteryGauge->SetColorStep(40, wxColour(255, 255, 0), wxColour(92, 92, 0));
+			batteryGauge->SetColorStep(100, wxColour(0, 255, 0), wxColour(0, 92, 0));
+			batteryGauge->SetMark(10, 0.33);
+			batteryGauge->SetMark(20, 0.33);
+			batteryGauge->SetMark(30, 0.33);
+			batteryGauge->SetMark(40, 0.33);
+			batteryGauge->SetMark(50, 0.66);
+			batteryGauge->SetMark(60, 0.33);
+			batteryGauge->SetMark(70, 0.33);
+			batteryGauge->SetMark(80, 0.33);
+			batteryGauge->SetMark(90, 0.33);
 			
 			grid->Add(timeToEmpty = new wxStaticText(this, wxID_ANY, wxT("")), 0, wxALIGN_CENTER_VERTICAL);
 			timeToEmpty->SetToolTip(wxT("Time to empty"));
+		}
+		{
+			grid->Add(new wxStaticText(this, wxID_ANY, wxT("Current load:")), 0, wxALIGN_CENTER_VERTICAL);
+
+			grid->Add(currentLoad = new wxStaticText(this, wxID_ANY, wxT("")), 0, wxALIGN_CENTER_VERTICAL);
+			currentLoad->SetToolTip(wxT("Current load"));
+
+			grid->Add(loadGauge = new wxColoredGauge(this, wxID_ANY, 0, 0, 120, wxDefaultPosition, wxDefaultSize, wxBORDER_SUNKEN), 0, wxALIGN_CENTER_VERTICAL|wxEXPAND);
+			loadGauge->SetColorStep(80, wxColour(0, 255, 0), wxColour(0, 92, 0));
+			loadGauge->SetColorStep(100, wxColour(255, 255, 0), wxColour(92, 92, 0));
+			loadGauge->SetColorStep(120, wxColour(255, 0, 0), wxColour(92, 0, 0));
+			loadGauge->SetMark(20, 0.33);
+			loadGauge->SetMark(40, 0.33);
+			loadGauge->SetMark(60, 0.33);
+			loadGauge->SetMark(80, 0.33);
+			loadGauge->SetMark(100, 0.33);
+
+			grid->Add(outputCurrent = new wxStaticText(this, wxID_ANY, wxT("")), 0, wxALIGN_CENTER_VERTICAL);
+			outputCurrent->SetToolTip(wxT("Current output"));
 		}
 		gsz->Add(grid, 0, wxEXPAND|wxALL, 4);
 	}
@@ -164,19 +183,20 @@ void HazelnutConfigDialog::RefreshInfos()
 {
 	Device current = wxGetApp().GetDevice();
 	long longVal, hh, mm, ss;
+	double doubleVal;
 	wxString str;
 
 	if(current)
 	{
 		if(current.getVar("battery.charge").ToLong(&longVal))
 		{
-			gauge->SetValue(longVal);
+			batteryGauge->SetValue(longVal);
 			batteryCharge->SetLabel(wxString::Format(wxT("%ld %%"), longVal));
 		}
 		else
 		{
-			gauge->SetValue(0);
-			gauge->SetToolTip(wxT("Not available"));
+			batteryGauge->SetValue(0);
+			batteryGauge->SetToolTip(wxT("Not available"));
 			batteryCharge->SetLabel(wxT("N/A"));
 		}
 
@@ -205,12 +225,38 @@ void HazelnutConfigDialog::RefreshInfos()
 		{
 			timeToEmpty->SetLabel(wxT("N/A"));
 		}
+
+		if(current.getVar("ups.load").ToDouble(&doubleVal))
+		{
+			loadGauge->SetValue(doubleVal);
+			currentLoad->SetLabel(wxString::Format(wxT("%d %%"), (int)doubleVal));
+		}
+		else
+		{
+			loadGauge->SetValue(0);
+			loadGauge->SetToolTip(wxT("Not available"));
+			currentLoad->SetLabel(wxT("N/A"));
+		}
+
+		if(current.getVar("output.current").ToDouble(&doubleVal))
+		{
+			outputCurrent->SetLabel(wxString::Format(wxT("%f A"), doubleVal));
+		}
+		else
+		{
+			outputCurrent->SetLabel(wxT("N/A"));
+		}
+
 	}
 	else
 	{
-		gauge->SetValue(0);
+		batteryGauge->SetValue(0);
 		batteryCharge->SetLabel(wxT("N/A"));
-		timeToEmpty->SetLabel(wxT("N/A"));		
+		timeToEmpty->SetLabel(wxT("N/A"));
+		
+		loadGauge->SetValue(0);
+		currentLoad->SetLabel(wxT("N/A"));
+		outputCurrent->SetLabel(wxT("N/A"));
 	}
 	
 	Layout();

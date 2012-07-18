@@ -41,9 +41,12 @@ protected:
 	std::list<Device> devices;
 	
 	wxChoice* choice;
-	wxColoredGauge*  gauge;
+	wxColoredGauge*  batteryGauge;
 	wxStaticText* timeToEmpty;
 	wxStaticText* batteryCharge;
+	wxColoredGauge*  loadGauge;
+	wxStaticText* currentLoad;
+	wxStaticText* outputCurrent;
 
 	wxTimer* timer;
 	
