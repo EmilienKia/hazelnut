@@ -43,6 +43,7 @@ protected:
 	wxChoice* choice;
 	wxColoredGauge*  gauge;
 	wxStaticText* timeToEmpty;
+	wxStaticText* batteryCharge;
 
 	wxTimer* timer;
 	
