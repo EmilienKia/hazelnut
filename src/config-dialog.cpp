@@ -136,7 +136,7 @@ HazelnutConfigDialog::~HazelnutConfigDialog()
 {
 }
 
-bool HazelnutConfigDialog::HazelnutConfigDialog::Show(bool show)
+bool HazelnutConfigDialog::Show(bool show)
 {
 	if(!wxDialog::Show(show))
 		return false;
